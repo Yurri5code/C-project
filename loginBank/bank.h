@@ -38,6 +38,6 @@ char* passWordToConnect();
 char* username();
 void writeToFile(account person,const char* filename);
 account readFromFile(account person,const char* filename);
-inline void placeTheEndLine(char* string);
+void placeTheEndLine(char* string);
 
 #endif //BANK_H
