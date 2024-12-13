@@ -194,7 +194,10 @@ void choiceAfterInformation(const int m,const account person) {
         case 1 :
             printInfo(person);
             break;
-
+        case 5 :
+            diviser();
+            printf("\t\t GOOD BYE \n");
+        exit(0);
         default:
             printf("Invalid choice!\n");
     }
@@ -280,7 +283,7 @@ account readFromFile(account person,const char* filename) {
         exit(EXIT_FAILURE);
     }
     printf("recuperation of information.\n");
-    while(fscanf(file,"First Name: %[^\n]\nLast Name : %[^\n]\nUsername: %[^\n]\nPhone: %c\nGender: %[^\n]\nBirthDay: %[^\n]\n\n",person.first_name,person.last_name,person.username,person.phone,person.gender,person.DOB) == 6) {
+    while(fscanf(file,"First Name: %[^\n]\nLast Name : %[^\n]\nUsername: %[^\n]\nPhone: %[^\n]\nGender: %c\nBirthDay: %[^\n]\n\n",person.first_name,person.last_name,person.username,person.phone,person.gender,person.DOB) == 6) {
         printf(".");
     }
     /*placeTheEndLine(person.phone);
