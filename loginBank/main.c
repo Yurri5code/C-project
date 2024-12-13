@@ -45,8 +45,5 @@ int main(void)
     return 0;
 }
 
-//je suis au niveau de la fonction isTrue
-/*
- * ma fonction a du mal a verifier cette condition lors de la saisie du mot de passse
- * a revoir
- */
+//je suis au niveau de la fonction readFromFile pour recuperer le informations du fichier
+//
