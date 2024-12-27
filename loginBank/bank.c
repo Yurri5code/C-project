@@ -33,6 +33,7 @@ void diviser() {
     for(int i = 0;i < 50;i++) {
         printf("-");
     }
+    printf("\n");
 }
 
 char* initialisation() {
@@ -189,10 +190,44 @@ void printInfo(account person) {
     printf("\n\n");
 }
 
-void choiceAfterInformation(const int m,const account person) {
+void choiceAfterInformation(const int m,account person) {
     switch (m) {
         case 1 :
             printInfo(person);
+            break;
+        case 2 :
+            diviser();
+            printf("1.put bank information\n2.See bank information\n3.My solde\n");
+            short int ch = 0;
+            scanf("%hd",&ch);
+        clearInputBuffer();
+            if(ch == 1) {
+                bankAccount(&person);
+                bankToFile(person,"client.txt");
+            }else if(ch == 2) {
+                person = readBankFromFile(person,"client.txt");
+                bankInfo(person);
+            }else {
+                showSolde(person,"client.txt");
+            }
+        break;
+        case 3 :
+            diviser();
+            printf("Put the amount : ");
+            long amount = 0;
+            scanf("%ld",&amount);
+            person = readBankFromFile(person,"client.txt");
+            person.bankAccount.solde += amount;
+            newSolde(&person,"client.txt");
+            break;
+        case 4 :
+            diviser();
+            printf("Put the amount to take from your account : ");
+            long take = 0;
+            scanf("%ld",&take);
+            person = readBankFromFile(person,"client.txt");
+            person.bankAccount.solde -= take;
+            newSolde(&person,"client.txt");
             break;
         case 5 :
             diviser();
@@ -283,7 +318,7 @@ account readFromFile(account person,const char* filename) {
         exit(EXIT_FAILURE);
     }
     printf("recuperation of information.\n");
-    while(fscanf(file,"First Name: %[^\n]\nLast Name : %[^\n]\nUsername: %[^\n]\nPhone: %[^\n]\nGender: %c\nBirthDay: %[^\n]\n\n",person.first_name,person.last_name,person.username,person.phone,person.gender,person.DOB) == 6) {
+    while(fscanf(file,"First Name: %[^\n]\nLast Name : %[^\n]\nUsername: %[^\n]\nPhone: %[^\n]\nBirthDay: %[^\n]\n\n",person.first_name,person.last_name,person.username,person.phone,person.DOB) == 5) {
         printf(".");
     }
     /*placeTheEndLine(person.phone);
@@ -291,4 +326,109 @@ account readFromFile(account person,const char* filename) {
     printf("\n");*/
     fclose(file);
     return person;
+}
+
+account readFromFileB(account person,const char* filename) {
+    FILE *file = fopen(filename,"r");
+    if(file == NULL) {
+        perror("Error opening file\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("recuperation of information.\n");
+
+    char buffer[256];
+    char gender[1];
+    while(fgets(buffer,sizeof(buffer),file)) {
+        if(sscanf(buffer,"First Name: %[^\n]",person.first_name) == 1)continue;
+        if(sscanf(buffer,"Last Name : %[^\n]",person.last_name) == 1)continue;
+        if(sscanf(buffer,"Username: %[^\n]",person.username) == 1)continue;
+        if(sscanf(buffer,"Phone : %[^\n]",person.phone) == 1)continue;
+        if(sscanf(buffer,"Gender: %[^\n]",gender) == 1)continue;
+        if(sscanf(buffer,"BirthDay: %[^\n]",person.DOB) == 1)continue;
+    }
+    fclose(file);
+    person.gender = gender[0];
+    return person;
+}
+
+//readFromFileB est meilleure que la premiere version du code
+
+void bankAccount(account* person) {
+    printf("put the card number : ");
+    fgets(person->bankAccount.numberCard,MAX,stdin);
+    person->bankAccount.numberCard[strcspn(person->bankAccount.numberCard,"\n")] = '\0';
+
+    printf("\nput the valid date : ");
+    fgets(person->bankAccount.valid,MAX,stdin);
+    person->bankAccount.valid[strcspn(person->bankAccount.valid,"\n")] = '\0';
+
+    printf("\nPut the valid cmc : ");
+    fgets(person->bankAccount.cmc,MAX,stdin);
+    person->bankAccount.cmc[strcspn(person->bankAccount.cmc,"\n")] = '\0';
+
+    long long x = 0;
+    printf("\nPut your solde : ");
+    scanf("%ld",&x);
+    person->bankAccount.solde = x;
+    printf("it's just a joke :) \n");
+
+    diviser();
+    printf("Your bank account is created successfully\n");
+}
+
+void bankToFile(account person,const char* filename) {
+    FILE* file = fopen(filename,"a");
+    if(file == NULL) {
+        perror("Error opening file\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(file,"Card number : %s\nValid date : %s\nCMC: %s\nSolde : %ld\n\n",person.bankAccount.numberCard,person.bankAccount.valid,person.bankAccount.cmc,person.bankAccount.solde);
+    fclose(file);
+    diviser();
+}
+
+account readBankFromFile(account person,const char* filename) {
+    FILE* file = fopen(filename,"r");
+    if(file == NULL) {
+        perror("Error opening file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char buffer[256];
+    while(fgets(buffer,sizeof(buffer),file)) {
+        if(sscanf(buffer,"Card number : %[^\n]",person.bankAccount.numberCard) == 1)continue;
+        if(sscanf(buffer,"Valid date : %[^\n]",person.bankAccount.valid) == 1)continue;
+        if(sscanf(buffer,"CMC: %[^\n]",person.bankAccount.cmc) == 1)continue;
+        if(sscanf(buffer,"Solde : %ld",&person.bankAccount.solde) == 1)continue;
+    }
+    fclose(file);
+    return person;
+}
+
+void bankInfo(const account person) {
+    printf("Card number : %s\n",person.bankAccount.numberCard);
+    printf("Valid date : %s\n",person.bankAccount.valid);
+    printf("CMC : %s\n",person.bankAccount.cmc);
+    printf("Solde : %ld\n",person.bankAccount.solde);
+}
+
+void showSolde(account person,const char* filename) {
+    person = readBankFromFile(person,filename);
+    diviser();
+    printf("Please don't show your solde to anyone \n");
+    printf("Solde : %ld $\n",person.bankAccount.solde);
+    diviser();
+}
+
+void newSolde(account* person,const char* filename) {
+    if(filename == NULL) {
+        perror("No such directory...\n");
+        exit(EXIT_FAILURE);
+    }
+    FILE* file = fopen(filename,"a");
+    if(file == NULL) {
+        perror("Error opening file\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(file,"Solde : %ld",person->bankAccount.solde);
 }
