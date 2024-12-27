@@ -7,7 +7,8 @@ int main(void)
 {
     const short returnFirstMenu = menu();
     account person;
-    person.gender = 'M';
+    person.gender = 'X';
+    person.bankAccount.solde = 0;
     const char* filename = "client.txt";
     if(returnFirstMenu == 1) {
 
@@ -37,7 +38,7 @@ int main(void)
             free(connectPass);
         }while(!loggedIn);
         printf("\n\n************ Good morning %s ***************\n",person.username);
-        person = readFromFile(person,filename);
+        person = readFromFileB(person,filename);
 
         choiceAfterInformation(menuAfterInformation(person),person);
     }
@@ -45,5 +46,4 @@ int main(void)
     return 0;
 }
 
-//je suis au niveau de la fonction readFromFile pour recuperer le informations du fichier
-//
+//le projet est presque acheve il ne reste que la gestion des mises a jours du soldes lors des ajouts et des retraits 
